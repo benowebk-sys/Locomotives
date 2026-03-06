@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Locomotives and Other Rolling Stock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-black: #000000;
+            --dark-gray: #111111;
+            --mid-gray: #1f1f1f;
+            --light-gray: #333333;
+            --brand-red: #e11d48;
+            --brand-red-hover: #be123c;
+            --brand-green: #10b981;
+            --text-light: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--pure-black);
+            color: var(--text-light);
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .oswald { font-family: 'Oswald', sans-serif; }
+
+        .glass-effect {
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(225, 29, 72, 0.2);
+        }
+
+        .dark-card {
+            background: var(--dark-gray);
+            border: 1px solid var(--light-gray);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .btn-red {
+            background-color: var(--brand-red);
+            transition: all 0.3s ease;
+        }
+
+        .btn-red:active {
+            transform: scale(0.98);
+        }
+
+        .btn-red:hover:not(:disabled) {
+            background-color: var(--brand-red-hover);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--light-gray);
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Logo */
+        .train-logo-responsive {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--brand-red);
+            box-shadow: 0 0 15px rgba(225, 29, 72, 0.3);
+        }
+
+        @media (min-width: 768px) {
+            .train-logo-responsive {
+                width: 110px;
+                height: 110px;
+                border-width: 3px;
+            }
+        }
+
+        .option-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--mid-gray);
+            border: 1px solid transparent;
+            user-select: none;
+        }
+
+        /* Feedback States */
+        .option-correct {
+            background: rgba(16, 185, 129, 0.2) !important;
+            border-color: var(--brand-green) !important;
+            color: white !important;
+        }
+        
+        .option-wrong {
+            background: rgba(225, 29, 72, 0.2) !important;
+            border-color: var(--brand-red) !important;
+            color: white !important;
+        }
+
+        .progress-bar-fill {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(90deg, #9f1239, #e11d48);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 640px) {
+            header {
+                padding: 12px 12px !important;
+            }
+
+            #ui-title {
+                font-size: 16px !important;
+            }
+
+            #ui-names {
+                font-size: 9px !important;
+            }
+
+            .train-logo-responsive {
+                width: 55px;
+                height: 55px;
+            }
+
+            .welcome-title {
+                font-size: 26px !important;
+                line-height: 1.2;
+            }
+
+            #ui-welcome-desc {
+                font-size: 13px !important;
+                padding: 0 10px;
+            }
+
+            #ui-start-btn {
+                font-size: 15px;
+                padding: 14px 30px;
+            }
+
+            .dark-card {
+                padding: 18px !important;
+            }
+
+            #question-text {
+                font-size: 16px !important;
+                line-height: 1.4;
+            }
+
+            .option-card {
+                padding: 12px !important;
+                font-size: 14px !important;
+            }
+
+            #next-btn {
+                font-size: 15px;
+                padding: 14px;
+            }
+        }
+
+        /* Optimization for very small devices */
+        @media (max-width: 360px) {
+            h1 { font-size: 1.25rem !important; }
+            .welcome-title { font-size: 1.75rem !important; }
+            .dark-card { padding: 1.25rem !important; }
+        }
+
+        [dir="rtl"] .oswald { font-family: 'Inter', sans-serif; font-weight: 700; }
+        [dir="rtl"] .tracking-widest { letter-spacing: 0; }
+    </style>
+</head>
+<body class="bg-black">
+
+    <!-- Header -->
+    <header class="w-full py-4 px-4 md:px-8 glass-effect sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 md:gap-6">
+                <img src="logo.jpg" alt="Locomotive Logo" class="train-logo-responsive" onerror="this.src='https://via.placeholder.com/120/111/e11d48?text=LOGO'">
+                <div class="min-w-0">
+                    <h1 id="ui-title" class="oswald text-lg md:text-3xl font-bold tracking-tight text-white uppercase leading-tight truncate">Locomotives and Other Rolling Stock</h1>
+                    <div id="ui-names" class="text-red-500 text-[10px] md:text-base font-medium mt-0.5 uppercase tracking-wider border-l-2 border-red-600 pl-2 leading-tight">
+                        Dr/seif ahmed &bull; Eng/Neveen Yayia
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="toggleLanguage()" class="btn-outline px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase flex items-center gap-1 shrink-0">
+                <span id="lang-label">العربية</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 relative">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
+            <div class="absolute top-1/4 -left-20 w-64 h-64 bg-red-900 rounded-full blur-[100px]"></div>
+            <div class="absolute bottom-1/4 -right-20 w-64 h-64 bg-red-900 rounded-full blur-[100px]"></div>
+        </div>
+
+        <!-- Welcome Section -->
+        <section id="welcome-screen" class="max-w-2xl w-full text-center fade-in relative z-10 py-6">
+            <h2 id="ui-welcome-title" class="welcome-title text-3xl md:text-6xl font-bold mb-6 text-white leading-tight uppercase oswald">
+                Locomotives and <span class="text-red-600">other rolling stock</span>
+            </h2>
+            <p id="ui-welcome-desc" class="text-gray-400 text-sm md:text-lg mb-8 max-w-md mx-auto font-light leading-relaxed">
+                Platform for displaying course questions.
+            </p>
+            <button onclick="startQuiz()" id="ui-start-btn" class="btn-red text-white font-bold py-4 px-10 md:px-16 rounded-full text-lg md:text-xl shadow-xl uppercase tracking-widest">
+                Start Assessment
+            </button>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz-screen" class="hidden max-w-3xl w-full fade-in relative z-10">
+            <div class="mb-6">
+                <div class="flex justify-between items-end mb-2">
+                    <span id="current-question-num" class="text-red-500 font-bold text-xs md:text-sm uppercase tracking-widest">Question 01</span>
+                    <span id="progress-text" class="text-gray-500 text-[10px] md:text-xs font-mono">0% COMPLETE</span>
+                </div>
+                <div class="w-full bg-stone-900 h-1 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="progress-bar-fill h-full w-0"></div>
+                </div>
+            </div>
+
+            <div class="dark-card rounded-2xl p-5 md:p-10 shadow-2xl">
+                <h3 id="question-text" class="text-lg md:text-2xl font-bold mb-6 md:mb-10 text-white leading-snug">
+                    ...
+                </h3>
+
+                <div id="options-container" class="grid gap-3"></div>
+
+                <div class="mt-8 flex flex-col gap-4">
+                    <div class="flex gap-3">
+                        <button id="prev-btn" onclick="prevQuestion()" class="btn-outline flex-1 text-white font-bold py-3 px-4 rounded-xl text-xs md:text-base opacity-50">
+                            ← <span id="ui-back">Back</span>
+                        </button>
+                        <button id="skip-btn" onclick="skipQuestion()" class="btn-outline flex-1 text-white font-bold py-3 px-4 rounded-xl text-xs md:text-base">
+                            <span id="ui-skip">Skip</span>
+                        </button>
+                    </div>
+                    <button id="next-btn" onclick="nextQuestion()" disabled class="btn-red w-full text-white font-bold py-4 rounded-xl text-sm md:text-lg disabled:opacity-30">
+                        <span id="ui-next">Next Question</span> →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Result Section -->
+        <section id="result-screen" class="hidden max-lg w-full text-center fade-in relative z-10">
+            <div class="dark-card rounded-2xl p-8 border-t-4 border-red-600">
+                <h2 id="ui-done" class="text-2xl md:text-3xl font-bold mb-4 text-white uppercase oswald">Assessment Finalized</h2>
+                <div class="h-1 w-12 bg-red-600 mx-auto mb-8"></div>
+                <div class="flex justify-center gap-6 mb-8">
+                    <div>
+                        <div id="final-score" class="text-4xl md:text-5xl font-bold text-red-600">0</div>
+                        <div id="ui-points" class="text-gray-500 uppercase text-[10px] tracking-widest mt-1">Correct</div>
+                    </div>
+                    <div class="w-px h-12 bg-white/10"></div>
+                    <div>
+                        <div id="final-percent" class="text-4xl md:text-5xl font-bold text-white">0%</div>
+                        <div id="ui-accuracy" class="text-gray-500 uppercase text-[10px] tracking-widest mt-1">Accuracy</div>
+                    </div>
+                </div>
+                <p id="performance-comment" class="text-sm md:text-base text-gray-300 mb-8 italic px-4"></p>
+                <button onclick="restartQuiz()" id="ui-restart" class="btn-red w-full text-white font-bold py-4 rounded-xl text-base uppercase tracking-widest">
+                    Retry Assessment
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-6 px-4 bg-black border-t border-red-900/20">
+        <div class="max-w-6xl mx-auto text-center">
+            <div id="ui-footer-prog" class="oswald text-lg md:text-xl font-bold tracking-widest text-red-600 uppercase mb-2">
+                By Programmer Bilal Mohammed
+            </div>
+            <div id="ui-footer-sub" class="text-gray-600 text-[10px] uppercase tracking-wider">
+                Professional Engineering &bull; Locomotives Module
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Locomotives and Other Rolling Stock",
+                names: "Dr/seif ahmed &bull; Eng/Neveen Yayia",
+                welcomeTitle: "Locomotives and <span class='text-red-600'>other rolling stock</span>",
+                welcomeDesc: "Platform for displaying course questions.",
+                startBtn: "Start Assessment",
+                back: "Back",
+                skip: "Skip",
+                next: "Next Question",
+                done: "Assessment Finalized",
+                points: "Correct",
+                accuracy: "Accuracy",
+                restart: "Retry Assessment",
+                langBtn: "العربية",
+                qPrefix: "Question",
+                complete: "COMPLETE",
+                footerProg: "By Programmer Bilal Mohammed",
+                footerSub: "Professional Engineering Series • Locomotives Module",
+                comments: {
+                    high: "Exceptional. You possess deep expertise in rolling stock systems.",
+                    mid: "Solid performance. You understand core principles.",
+                    low: "Study recommended. Focus on traction motors and power conversion."
+                }
+            },
+            ar: {
+                title: "القاطرات والوحدات المتحركة الأخرى",
+                names: "د. سيف أحمد • م. نيفين يحيى",
+                welcomeTitle: "القاطرات والوحدات <span class='text-red-600'>المتحركة الأخرى</span>",
+                welcomeDesc: "منصة لعرض أسئلة الدورة التدريبية.",
+                startBtn: "ابدأ التقييم",
+                back: "رجوع",
+                skip: "تخطي",
+                next: "السؤال التالي",
+                done: "تم الانتهاء",
+                points: "صح",
+                accuracy: "الدقة",
+                restart: "إعادة",
+                langBtn: "English",
+                qPrefix: "السؤال",
+                complete: "مكتمل",
+                footerProg: "المبرمج بلال محمد",
+                footerSub: "سلسلة الهندسة الاحترافية • وحدة القاطرات",
+                comments: {
+                    high: "استثنائي. تمتلك خبرة عميقة في الأنظمة.",
+                    mid: "أداء جيد. أنت تفهم المبادئ الأساسية.",
+                    low: "يوصى بالمراجعة. ركز على محركات الجر وتحويل الطاقة."
+                }
+            }
+        };
+
+        const questionsData = [
+            { 
+                en: { q: "What is the broad term for all railway vehicles that move on tracks, including locomotives and wagons?", options: ["Fixed Infrastructure", "Rolling Stock", "Motive Power", "Coaching Stock"] },
+                ar: { q: "ما هو المصطلح العام لجميع مركبات السكك الحديدية التي تتحرك على القضبان؟", options: ["البنية التحتية الثابتة", "الوحدات المتحركة (Rolling Stock)", "قوة الجر", "وحدات التدريب"] },
+                answer: 1 
+            },
+            { 
+                en: { q: "Which of the following is NOT one of the three main types of locomotives classified by power source?", options: ["Steam Locomotive", "Diesel Locomotive", "Hybrid Locomotive", "Electric Locomotive"] },
+                ar: { q: "أي مما يلي ليس من الأنواع الثلاثة الرئيسية للقاطرات حسب مصدر الطاقة؟", options: ["القاطرة البخارية", "قاطرة الديزل", "القاطرة الهجينة", "القاطرة الكهربائية"] },
+                answer: 2 
+            },
+            { 
+                en: { q: "In a diesel-electric locomotive, what is the role of the main generator or alternator?", options: ["To turn the wheels directly using gears", "To convert mechanical energy from the diesel engine into electrical energy", "To compress air for the engine's four-stroke cycle", "To step down the high-voltage current from the overhead wires"] },
+                ar: { q: "في قاطرة الديزل الكهربائية، ما هو دور المولد الرئيسي؟", options: ["تدوير العجلات بالتروس", "تحويل الطاقة الميكانيكية إلى كهربائية", "ضغط الهواء للدورة", "خفض التيار عالي الجهد"] },
+                answer: 1 
+            },
+            { 
+                en: { q: "What is a primary advantage of traction motors on a locomotive?", options: ["They require no maintenance", "They can deliver maximum torque at zero speed, providing immense pulling power", "They are the lightest component on the locomotive", "They eliminate the need for a diesel engine"] },
+                ar: { q: "ما هي الميزة الأساسية لمحركات الجر في القاطرة؟", options: ["لا تتطلب صيانة", "توفير أقصى عزم عند سرعة الصفر", "هي المكون الأخف وزناً", "تلغي الحاجة لمحرك ديزل"] },
+                answer: 1 
+            },
+            { 
+                en: { q: "Which component is unique to an electric locomotive and is not found on a diesel or steam locomotive?", options: ["Connecting Rods", "Traction Motors", "Pantograph", "Firebox"] },
+                ar: { q: "أي مكون ينفرد به القاطرة الكهربائية؟", options: ["قضبان التوصيل", "محركات الجر", "البانتوغراف", "صندوق النار"] },
+                answer: 2 
+            },
+            { 
+                en: { q: "The document lists all the following as disadvantages of steam locomotives EXCEPT:", options: ["Very low thermal efficiency", "High water consumption", "High initial cost due to complex electronics", "Environmental pollution from smoke and gases"] },
+                ar: { q: "كل ما يلي عيوب للقاطرات البخارية ما عدا:", options: ["كفاءة حرارية منخفضة جداً", "استهلاك عالي للمياه", "تكلفة أولية عالية للإلكترونيات", "تلوث بيئي"] },
+                answer: 2 
+            },
+            { 
+                en: { q: "What is the main function of rectifiers and inverters in a modern locomotive's power system?", options: ["To increase the voltage from the diesel engine", "To convert and condition electrical current for traction motors", "To store excess energy in batteries", "To filter the diesel fuel before it enters the engine"] },
+                ar: { q: "ما وظيفة الموحدات (Rectifiers) والعواكس (Inverters)؟", options: ["زيادة الجهد", "تحويل ومعالجة التيار لمحركات الجر", "تخزين الطاقة", "تصفية الوقود"] },
+                answer: 1 
+            },
+            { 
+                en: { q: "A regular train car is designed to be self-propelled and provide the motive power for a train.", options: ["True", "False"] },
+                ar: { q: "صممت عربة القطار العادية لتكون ذاتية الدفع وتوفر قوة الجر.", options: ["صح", "خطأ"] },
+                answer: 1 
+            },
+            { 
+                en: { q: "One of the main disadvantages of diesel-electric locomotives is their reliance on overhead wires or a third rail for power.", options: ["True", "False"] },
+                ar: { q: "عيوب قاطرات الديزل اعتمادها على الأسلاك العلوية.", options: ["صح", "خطأ"] },
+                answer: 1 
+            },
+            { 
+                en: { q: "The four strokes of a diesel engine cycle are Intake, Compression, Power, and Exhaust.", options: ["True", "False"] },
+                ar: { q: "الأشواط الأربعة هي السحب والضغط والقدرة والعادم.", options: ["صح", "خطأ"] },
+                answer: 0 
+            },
+            { 
+                en: { q: "Steam locomotives have a high thermal efficiency, meaning they convert most of the energy in their fuel into useful work.", options: ["True", "False"] },
+                ar: { q: "تتمتع القاطرات البخارية بكفاءة حرارية عالية.", options: ["صح", "خطأ"] },
+                answer: 1 
+            },
+            { 
+                en: { q: "In a diesel-electric locomotive, the diesel engine directly turns the wheels.", options: ["True", "False"] },
+                ar: { q: "في قاطرة الديزل، محرك الديزل يدور العجلات مباشرة.", options: ["صح", "خطأ"] },
+                answer: 1 
+            },
+            { 
+                en: { q: "Special-purpose vehicles such as track maintenance cars and rescue trains are considered a type of rolling stock.", options: ["True", "False"] },
+                ar: { q: "عربات صيانة المسارات تعتبر نوعاً من الوحدات المتحركة.", options: ["صح", "خطأ"] },
+                answer: 0 
+            },
+            { 
+                en: { q: "Regenerative braking allows electric locomotives to feed power back into the electrical grid while slowing down.", options: ["True", "False"] },
+                ar: { q: "يسمح الكبح المتجدد بإعادة الطاقة للشبكة.", options: ["صح", "خطأ"] },
+                answer: 0 
+            },
+            { 
+                en: { q: "A major advantage of electric locomotives is their low initial cost for infrastructure.", options: ["True", "False"] },
+                ar: { q: "ميزة القاطرات الكهربائية هي تكلفتها المنخفضة للبنية التحتية.", options: ["صح", "خطأ"] },
+                answer: 1 
+            }
+        ];
+
+        let currentLang = 'en';
+        let currentIdx = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            updateUIStrings();
+            if (!document.getElementById('quiz-screen').classList.contains('hidden')) loadQuestion();
+            if (!document.getElementById('result-screen').classList.contains('hidden')) calculateResults();
+        }
+
+        function updateUIStrings() {
+            const t = translations[currentLang];
+            document.getElementById('ui-title').innerText = t.title;
+            document.getElementById('ui-names').innerHTML = t.names;
+            document.getElementById('ui-welcome-title').innerHTML = t.welcomeTitle;
+            document.getElementById('ui-welcome-desc').innerText = t.welcomeDesc;
+            document.getElementById('ui-start-btn').innerText = t.startBtn;
+            document.getElementById('ui-back').innerText = t.back;
+            document.getElementById('ui-skip').innerText = t.skip;
+            document.getElementById('ui-next').innerText = t.next;
+            document.getElementById('ui-done').innerText = t.done;
+            document.getElementById('ui-points').innerText = t.points;
+            document.getElementById('ui-accuracy').innerText = t.accuracy;
+            document.getElementById('ui-restart').innerText = t.restart;
+            document.getElementById('lang-label').innerText = t.langBtn;
+            document.getElementById('ui-footer-prog').innerText = t.footerProg;
+            document.getElementById('ui-footer-sub').innerText = t.footerSub;
+        }
+
+        function startQuiz() {
+            window.scrollTo(0, 0);
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentIdx = 0;
+            userAnswers = new Array(questionsData.length).fill(null);
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const data = questionsData[currentIdx][currentLang];
+            const t = translations[currentLang];
+            const correctAnswer = questionsData[currentIdx].answer;
+            const userAnswer = userAnswers[currentIdx];
+            
+            document.getElementById('current-question-num').innerText = `${t.qPrefix} ${String(currentIdx + 1).padStart(2, '0')}`;
+            document.getElementById('question-text').innerText = data.q;
+            
+            const progress = Math.round((currentIdx / questionsData.length) * 100);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').innerText = `${progress}% ${t.complete}`;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            data.options.forEach((opt, i) => {
+                const card = document.createElement('div');
+                card.className = 'option-card p-4 rounded-xl flex items-center gap-3 text-sm md:text-base font-medium';
+                
+                // Styling based on feedback
+                if (userAnswer !== null && userAnswer !== -1) {
+                    if (i === correctAnswer) {
+                        card.classList.add('option-correct');
+                    } else if (i === userAnswer) {
+                        card.classList.add('option-wrong');
+                    }
+                    card.style.cursor = 'default';
+                }
+
+                card.innerHTML = `
+                    <div class="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center text-[10px] font-bold shrink-0 ${userAnswer === i ? 'bg-white text-red-600' : 'bg-black'}">
+                        ${String.fromCharCode(65 + i)}
+                    </div>
+                    <span>${opt}</span>
+                `;
+                
+                if (userAnswer === null) {
+                    card.onclick = () => selectOption(i);
+                }
+                
+                container.appendChild(card);
+            });
+
+            const prevBtn = document.getElementById('prev-btn');
+            prevBtn.disabled = currentIdx === 0;
+            prevBtn.style.opacity = currentIdx === 0 ? '0.2' : '1';
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = userAnswer === null;
+        }
+
+        function selectOption(i) {
+            if (userAnswers[currentIdx] !== null) return; // Prevent changing answer
+            userAnswers[currentIdx] = i;
+            loadQuestion(); // Re-render to show correct/incorrect
+        }
+
+        function nextQuestion() {
+            window.scrollTo(0, 0);
+            if (currentIdx < questionsData.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                calculateResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                loadQuestion();
+            }
+        }
+
+        function skipQuestion() {
+            // Only mark as skipped if no answer was already chosen
+            if (userAnswers[currentIdx] === null) {
+                userAnswers[currentIdx] = -1;
+            }
+            nextQuestion();
+        }
+
+        function calculateResults() {
+            window.scrollTo(0, 0);
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            let score = 0;
+            userAnswers.forEach((ans, i) => {
+                if (ans === questionsData[i].answer) score++;
+            });
+
+            document.getElementById('final-score').innerText = score;
+            const pct = Math.round((score / questionsData.length) * 100);
+            document.getElementById('final-percent').innerText = `${pct}%`;
+
+            const t = translations[currentLang];
+            const comment = document.getElementById('performance-comment');
+            if (pct >= 90) comment.innerText = t.comments.high;
+            else if (pct >= 70) comment.innerText = t.comments.mid;
+            else comment.innerText = t.comments.low;
+        }
+
+        function restartQuiz() {
+            window.scrollTo(0, 0);
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+        }
+
+        updateUIStrings();
+    </script>
+</body>
+</html>
