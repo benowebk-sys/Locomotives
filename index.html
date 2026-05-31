@@ -4,169 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Locomotives & Rolling Stock</title>
+    <!-- استدعاء Tailwind CSS و الخطوط -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --light-gray: #f3f4f6;
-            --mid-gray: #9ca3af;
-            --dark-gray: #1f2937;
-            --accent-color: #3b82f6; 
-            --success-color: #00f2ff;
-            --error-color: #ff003c;
-            --bebo-purple: #9d00ff;
-        }
-
-        body {
-            background: #020205;
-            color: var(--light-gray);
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-
-        .header-title {
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
-            color: var(--light-gray);
-            letter-spacing: 1px;
-            font-size: 0.9rem;
-        }
-        @media (min-width: 768px) {
-            .header-title { letter-spacing: 4px; font-size: 2rem; }
-        }
-
-        .header-border {
-            height: 2px;
-            background: var(--accent-color);
-            width: 100%;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-        }
-
-        .question-card {
-            background: #0d0d12;
-            border: 1px solid #1a1a24;
-            border-left: 3px solid var(--accent-color);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
-            width: 100%;
-        }
-        @media (min-width: 768px) {
-            .question-card { border-left-width: 6px; }
-        }
-
-        .bebo-wrapper {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: -10px;
-            z-index: 50;
-            pointer-events: none;
-        }
-
-        .bebo-bubble {
-            background: #12121a;
-            border: 1px solid #222230;
-            padding: 8px 12px;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 11px;
-            max-width: 85%;
-            margin-bottom: 8px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-            opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            direction: rtl;
-            pointer-events: auto;
-            text-align: center;
-        }
-        @media (min-width: 768px) {
-            .bebo-bubble { font-size: 14px; max-width: 320px; padding: 12px 20px; }
-        }
-
-        .bebo-bubble.active { opacity: 1; transform: scale(1); }
-
-        .bebo-robot {
-            width: 60px;
-            height: 60px;
-            background: #0d0d12; 
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            box-shadow: inset 1px 1px 2px rgba(255,255,255,0.05), 0 10px 20px rgba(0,0,0,0.7);
-            cursor: pointer;
-            border: 1px solid #1a1a24;
-            animation: beboFloat 4s ease-in-out infinite;
-            pointer-events: auto;
-        }
-        @media (min-width: 768px) {
-            .bebo-robot { width: 95px; height: 95px; border-radius: 28px; }
-        }
-
-        @keyframes beboFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .eyes-container { display: flex; gap: 6px; }
-        @media (min-width: 768px) { .eyes-container { gap: 10px; } }
-        
-        .eye {
-            width: 8px; height: 12px;
-            background: var(--bebo-purple);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--bebo-purple);
-            transition: all 0.3s ease;
-        }
-        @media (min-width: 768px) { .eye { width: 10px; height: 16px; box-shadow: 0 0 10px var(--bebo-purple), 0 0 20px var(--bebo-purple); } }
-
-        .option-btn {
-            background: transparent;
-            border: 1px solid #222;
-            color: var(--mid-gray);
-            transition: all 0.2s ease;
-            text-align: left;
-            padding: 0.6rem 0.8rem;
-            width: 100%;
-        }
-
-        .option-btn:hover:not(.locked) {
-            border-color: var(--accent-color);
-            color: #ffffff;
-            background: rgba(59, 130, 246, 0.03);
-        }
-
-        .option-btn.correct { border-color: var(--success-color) !important; color: var(--success-color) !important; background: rgba(0, 242, 255, 0.05) !important; }
-        .option-btn.wrong { border-color: var(--error-color) !important; color: var(--error-color) !important; background: rgba(255, 0, 60, 0.05) !important; }
-        .option-btn.locked { cursor: default; }
-
-        .nav-btn { background: #0d0d12; border: 1px solid #1a1a24; color: var(--mid-gray); transition: all 0.2s; font-size: 0.75rem; }
-        @media (min-width: 768px) { .nav-btn { font-size: 0.875rem; } }
-        .nav-btn:hover:not(:disabled) { border-color: var(--accent-color); color: #fff; }
-        .nav-btn:disabled { opacity: 0.1; cursor: not-allowed; }
-
-        .hint-container { background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid #1a1a24; cursor: pointer; }
-        .bulb-icon { width: 16px; height: 16px; fill: #333; transition: all 0.4s ease; }
-
-        #progress-bar { height: 3px; background: #000; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000; }
-        #progress-fill { height: 100%; background: var(--accent-color); width: 0%; transition: width 0.5s ease; }
-
-        .translation-text {
-            display: block;
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-top: 2px;
-            font-family: 'Inter', sans-serif;
-            direction: rtl;
-        }
-        @media (min-width: 768px) { .translation-text { font-size: 0.85rem; margin-top: 4px; } }
-    </style>
+    <link rel="stylesheet" href="styel.css">
 </head>
 <body>
 
@@ -178,6 +19,7 @@
     </header>
 
     <main class="flex-grow container mx-auto px-4 py-4 md:py-8 flex flex-col items-center justify-start md:justify-center relative z-10">
+        <!-- Bebo Character Section -->
         <div class="bebo-wrapper">
             <div id="bebo-bubble" class="bebo-bubble">يا هلا يا هلا</div>
             <div id="bebo-robot" class="bebo-robot">
@@ -188,8 +30,10 @@
             </div>
         </div>
 
+        <!-- Quiz Container -->
         <div id="quiz-container" class="w-full max-w-2xl lg:max-w-3xl">
             <div id="question-card" class="question-card rounded-sm overflow-hidden mb-4 md:mb-6">
+                <!-- Hint Section -->
                 <div class="hint-container px-4 py-2 md:px-6 md:py-4 flex items-center justify-between" onclick="toggleHint()">
                     <div class="text-[8px] md:text-[11px] tracking-[0.1em] md:tracking-[0.3em] text-zinc-600 font-bold uppercase">
                         HINT SERVICE: 
@@ -205,6 +49,7 @@
                     </div>
                 </div>
 
+                <!-- Question Content -->
                 <div class="p-5 md:p-10">
                     <p id="question-number" class="text-zinc-500 font-bold mb-2 md:mb-4 uppercase tracking-[0.2em] text-[8px] md:text-xs">ASSESSMENT POINT</p>
                     <div class="mb-6 md:mb-10">
@@ -215,6 +60,7 @@
                 </div>
             </div>
 
+            <!-- Navigation Controls -->
             <div class="flex flex-wrap justify-between gap-2 md:gap-3">
                 <button id="back-btn" onclick="prevQuestion()" class="nav-btn px-4 py-2 md:px-10 md:py-3 rounded-sm font-bold uppercase flex-1 md:flex-none">Back</button>
                 <div class="flex gap-2 md:gap-3 flex-[2] md:flex-none">
@@ -224,6 +70,7 @@
             </div>
         </div>
 
+        <!-- Result View -->
         <div id="result-view" class="hidden w-full max-w-xl text-center bg-zinc-950 p-6 md:p-16 rounded-sm border border-zinc-900">
             <h2 class="text-lg md:text-2xl font-bold mb-4 text-zinc-500 uppercase tracking-widest"> Finali</h2>
             <div class="final-score-val font-black text-4xl md:text-6xl text-white mb-2" id="final-score">0%</div>
@@ -238,220 +85,6 @@
         </div>
     </footer>
 
-   <script>
-        const quizData = [
-            // --- Sheet 1: 7 MCQs ---
-            { 
-                q: "What is the broad term for all railway vehicles that move on tracks, including locomotives and wagons?", 
-                tr: "ما هو المصطلح العام لجميع مركبات السكك الحديدية التي تتحرك على المسارات، بما في ذلك القاطرات والعربات؟",
-                options: ["Fixed Infrastructure", "Rolling Stock", "Motive Power", "Coaching Stock"], 
-                optsTr: ["البنية التحتية الثابتة", "الوحدات المتحركة (Rolling Stock)", "قوة الدفع", "عربات الركاب"],
-                a: 1, hint: "Covers all track vehicles.", hintTr: "يغطي كافة مركبات القضبان."
-            },
-            { 
-                q: "Which of the following is NOT one of the three main types of locomotives classified by power source?", 
-                tr: "أي مما يلي ليس أحد الأنواع الثلاثة الرئيسية للقاطرات المصنفة حسب مصدر الطاقة؟",
-                options: ["Steam Locomotive", "Diesel Locomotive", "Hybrid Locomotive", "Electric Locomotive"], 
-                optsTr: ["قاطرة بخارية", "قاطرة ديزل", "قاطرة هجينة", "قاطرة كهربائية"],
-                a: 2, hint: "Classic types: Steam, Diesel, Electric.", hintTr: "الأنواع الكلاسيكية: بخار، ديزل، كهرباء."
-            },
-            { 
-                q: "In a diesel-electric locomotive, what is the role of the main generator or alternator?", 
-                tr: "في قاطرة الديزل الكهربائية، ما هو دور المولد الرئيسي؟",
-                options: ["Turn wheels directly", "Convert mechanical energy to electrical", "Compress air", "Step down voltage"], 
-                optsTr: ["تدوير العجلات مباشرة", "تحويل الطاقة الميكانيكية إلى كهربائية", "ضغط الهواء", "خفض الجهد"],
-                a: 1, hint: "Generators make electricity.", hintTr: "المولدات تنتج الكهرباء."
-            },
-            { 
-                q: "What is a primary advantage of traction motors on a locomotive?", 
-                tr: "ما هي الميزة الأساسية لمحركات الجر في القاطرة؟",
-                options: ["No maintenance", "Max torque at zero speed", "Lightest component", "No diesel needed"], 
-                optsTr: ["لا صيانة", "أقصى عزم عند سرعة الصفر", "أخف مكون", "لا حاجة للديزل"],
-                a: 1, hint: "Start-up pulling power.", hintTr: "قوة السحب عند بداية الحركة."
-            },
-            { 
-                q: "Which component is unique to an electric locomotive?", 
-                tr: "ما هو المكون الفريد للقاطرة الكهربائية؟",
-                options: ["Connecting Rods", "Traction Motors", "Pantograph", "Firebox"], 
-                optsTr: ["قضبان التوصيل", "محركات الجر", "البانتوغراف (جامع التيار)", "صندوق النار"],
-                a: 2, hint: "Power collector from wires.", hintTr: "جامع الطاقة من الأسلاك."
-            },
-            { 
-                q: "Disadvantages of steam locomotives include all EXCEPT:", 
-                tr: "تتضمن عيوب القاطرات البخارية كل ما يلي ما عدا:",
-                options: ["Low efficiency", "High water use", "Complex electronics cost", "Pollution"], 
-                optsTr: ["كفاءة منخفضة", "استهلاك مياه عالٍ", "تكلفة إلكترونيات معقدة", "تلوث"],
-                a: 2, hint: "Steam is mechanical.", hintTr: "البخار نظام ميكانيكي."
-            },
-            { 
-                q: "Function of rectifiers and inverters in modern locomotives?", 
-                tr: "ما وظيفة الموحدات والعواكس في القاطرات الحديثة؟",
-                options: ["Increase voltage", "Condition current for motors", "Store energy", "Filter fuel"], 
-                optsTr: ["زيادة الجهد", "تهيئة التيار للمحركات", "تخزين الطاقة", "تصفية الوقود"],
-                a: 1, hint: "Current conditioning.", hintTr: "تهيئة التيار الكهربائي."
-            },
-            // --- Sheet 1: 8 T/F ---
-            { q: "A regular train car is designed to be self-propelled.", tr: "عربة القطار العادية مصممة لتكون ذاتية الدفع.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Need a loco.", hintTr: "تحتاج لقاطرة." },
-            { q: "Diesel-electrics rely on overhead wires for power.", tr: "تعتمد قاطرات الديزل الكهربائية على الأسلاك العلوية.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Self-contained fuel.", hintTr: "تحمل وقودها بداخلها." },
-            { q: "The four strokes are Intake, Compression, Power, and Exhaust.", tr: "الأشواط الأربعة هي: السحب، الضغط، القدرة، والعادم.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Standard cycle.", hintTr: "الدورة القياسية." },
-            { q: "Steam locomotives have high thermal efficiency.", tr: "القاطرات البخارية لها كفاءة حرارية عالية.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Very wasteful.", hintTr: "تهدر الكثير من الطاقة." },
-            { q: "In diesel-electric, the engine directly turns the wheels.", tr: "في الديزل الكهربائي، يدير المحرك العجلات مباشرة.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Generator first.", hintTr: "المولد أولاً." },
-            { q: "Track maintenance cars are rolling stock.", tr: "عربات الصيانة تعتبر وحدات متحركة.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "On rails = rolling stock.", hintTr: "على القضبان = وحدات متحركة." },
-            { q: "Regenerative braking feeds power back to the grid.", tr: "الكبح المتجدد يعيد الطاقة للشبكة.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Recovers energy.", hintTr: "يستعيد الطاقة." },
-            { q: "Electric locomotives have low infrastructure costs.", tr: "القاطرات الكهربائية لها تكلفة بنية تحتية منخفضة.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Wires are expensive.", hintTr: "الأسلاك مكلفة جداً." },
-            // --- Quiz 1 (Part A): 10 questions ---
-            { q: "A train is connected cars, while a locomotive is the engine.", tr: "القطار عربات متصلة، والقاطرة هي المحرك.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Basic definition.", hintTr: "تعريف أساسي." },
-            { q: "Locomotives have three main types: steam, diesel, electric.", tr: "للقاطرات 3 أنواع طاقة: بخار، ديزل، كهرباء.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Power sources.", hintTr: "مصادر الطاقة." },
-            { q: "Regenerative braking uses motors as generators.", tr: "الكبح المتجدد يستخدم المحركات كمولدات.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Return power.", hintTr: "إرجاع الطاقة." },
-            { q: "Steam engines have very low efficiency (6% to 8%).", tr: "المحركات البخارية كفاءتها منخفضة (6% إلى 8%).", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Energy loss.", hintTr: "فقد الطاقة." },
-            { q: "'Double heading' means using two locomotives for heavy loads.", tr: "'الجر المزدوج' يعني استخدام قاطرتين للأحمال الثقيلة.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Steep hills.", hintTr: "المنحدرات الصعبة." },
-            { q: "Steam engines are still commonly used for modern trains.", tr: "المحركات البخارية لا تزال شائعة اليوم.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Historical mainly.", hintTr: "تاريخية غالباً." },
-            { q: "Internal combustion engines handle heavy loads without stalling.", tr: "محركات الاحتراق الداخلي تتحمل الأحمال الثقيلة دون توقف.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Needs gearbox.", hintTr: "تحتاج لناقل حركة." },
-            { q: "Electric train systems are cheap to set up initially.", tr: "أنظمة القطارات الكهربائية رخيصة التأسيس.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "High setup cost.", hintTr: "تكلفة تأسيس عالية." },
-            { q: "Long-distance trains spend most time starting and stopping.", tr: "قطارات المسافات الطويلة تقضي معظم الوقت في الوقوف والتحرك.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Steady speed.", hintTr: "سرعة ثابتة." },
-            { q: "Engines are only in locos and never under passenger cars.", tr: "المحركات توجد فقط في القاطرة وليس تحت العربات.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Consider DMU/EMU.", hintTr: "فكر في الوحدات المتعددة." },
-            // --- Quiz 1 (Part B): 10 questions ---
-            { q: "City trains run at steady constant speed to save energy.", tr: "قطارات المدينة تسير بسرعة ثابتة لتوفير الطاقة.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Urban cycle.", hintTr: "دورة المدينة." },
-            { q: "Making stops longer will increase overall schedule speed.", tr: "إطالة فترات التوقف تزيد من سرعة الجدول.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Longer stops = slower.", hintTr: "توقف أطول = أبطأ." },
-            { q: "Fully electric trains generate own power without wires.", tr: "القطارات الكهربائية تولد طاقتها دون أسلاك خارجية.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Needs pantograph.", hintTr: "تحتاج لجامع تيار." },
-            { q: "Steam engines convert almost all heat into movement.", tr: "المحركات البخارية تحول كل الحرارة إلى حركة.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Very inefficient.", hintTr: "غير فعالة." },
-            { q: "Infrastructure for electric trains is very cheap.", tr: "البنية التحتية للقطارات الكهربائية رخيصة جداً.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 1, hint: "Big investment.", hintTr: "استثمار كبير." },
-            { q: "City trains have stops less than 1 km apart.", tr: "توقفات قطارات المدينة تكون على بعد أقل من 1 كم.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Frequent stations.", hintTr: "محطات متقاربة." },
-            { q: "Diesel-electric drives waste little power when changing speeds.", tr: "أنظمة الديزل الكهربائية تهدر القليل من الطاقة عند تغيير السرعة.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Direct control.", hintTr: "تحكم مباشر." },
-            { q: "Battery trains are good for trips of 50 to 60 km a day.", tr: "قطارات البطارية جيدة لرحلات 50-60 كم يومياً.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Short distances.", hintTr: "مسافات قصيرة." },
-            { q: "A diesel engine works in: Intake, Compression, Power, Exhaust.", tr: "الديزل يعمل بـ: سحب، ضغط، قدرة، عادم.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "4 steps.", hintTr: "4 خطوات." },
-            { q: "Schedule speed is distance divided by total time (inc. stops).", tr: "سرعة الجدول هي المسافة مقسومة على الزمن الكلي.", options: ["True", "False"], optsTr: ["صح", "خطأ"], a: 0, hint: "Overall speed.", hintTr: "السرعة الإجمالية." }
-        ];
-
-        let idx = 0, score = 0;
-        let userAns = new Array(quizData.length).fill(null);
-
-        const beboMessages = {
-            intro: ["مرحبا اسمي بيبو جاهز لبدء الاختبار؟"],
-            correct: [
-                "عاش يا وحش! أداء أسطوري.", "الله ينور عليك، تركيزك في السما!", "ممتاز! كمل يا بطل بنفس الحماس.",
-                "وحش! إجابة فنية مية مية.", "رائع، أنت فاهم اللعبة كويس جداً.", "برافو! إجابة أسطورية زي ما توقعت.",
-                "عاش يا دحيح، مجهودك جبار.", "تسلم إيدك، إجابة مظبوطة بالملي.", "أحسنت! فخور بيك فعلاً يا وحش."
-            ],
-            wrong: [
-                "غلط تماماً! ركز بقى عشان كدة كتير أوي!",
-                "إيه العك ده؟ فوق كدة واقرأ السؤال كويس يا هندسة!",
-                "إجابة كارثية! راجع معلوماتك فوراً كدة مينفعش!",
-                "غلط! أنت بتهزر ولا إيه؟ ركز بقى شوية!"
-            ],
-             resultsAdvice: [
-                "نتيجتك دى يسطا ولا درجة حرارة.",
-                "منتا لو تبص على التلميحات وأنت بتحل مكنتش جبت درجات الحرارة دى.",
-                "تعال اشرب شاي يسطا باللي أنت عامله ده.",
-                "متزعلش مش مهم درجتك في الامتحان المهم الصحة والستر.",
-                "هيجي شخص يحسسك إنك في كفة والكون كله في كفة وبعدين يسقفلك بالكفتين على وشك علشان النتيجة اللي أنت جايبها دى."
-            ],
-            resultsSuccess: [
-                "ما شاء الله عليك يا بطل!",
-                "هايل بجد عاش عليك، استمر.",
-                "شيء جميل جداً عندك أحسن من كده كمان عاش عليك."
-            ]
-        };
-        function setBebo(state, category) {
-            const robot = document.getElementById('bebo-robot');
-            const bubble = document.getElementById('bebo-bubble');
-            const msgs = beboMessages[category];
-            robot.className = `bebo-robot ${state}`;
-            if (msgs) {
-                bubble.innerText = msgs[Math.floor(Math.random() * msgs.length)];
-                bubble.classList.add('active');
-            }
-            setTimeout(() => { bubble.classList.remove('active'); }, 4000);
-        }
-
-        function toggleHint() {
-            const content = document.getElementById('hint-content');
-            const bulb = document.querySelector('.bulb-icon');
-            content.classList.toggle('hidden');
-            bulb.style.fill = content.classList.contains('hidden') ? '#333' : '#3b82f6';
-        }
-
-        function render() {
-            const q = quizData[idx];
-            document.getElementById('question-number').innerText = `ASSESSMENT POINT ${idx + 1} OF ${quizData.length}`;
-            document.getElementById('question-text').innerText = q.q;
-            document.getElementById('question-translation').innerText = q.tr || "";
-            document.getElementById('hint-text').innerText = q.hint;
-            document.getElementById('hint-translation').innerText = q.hintTr || "";
-            document.getElementById('hint-content').classList.add('hidden');
-            document.querySelector('.bulb-icon').style.fill = '#333';
-            
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-            
-            const answered = userAns[idx] !== null;
-            document.getElementById('next-btn').disabled = !answered;
-            document.getElementById('back-btn').disabled = idx === 0;
-
-            q.options.forEach((opt, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn rounded-sm flex flex-col w-full';
-                const optLabel = String.fromCharCode(65 + i);
-                const optTr = q.optsTr ? q.optsTr[i] : "";
-                
-                btn.innerHTML = `
-                    <div class="flex items-center gap-2 md:gap-3">
-                        <span class="bg-white/5 w-5 h-5 md:w-6 md:h-6 rounded-md flex items-center justify-center font-bold text-[9px] md:text-[10px]">${optLabel}</span>
-                        <span class="text-xs md:text-sm">${opt}</span>
-                    </div>
-                    <span class="translation-text text-[10px] md:text-[11px] opacity-70 mt-1">${optTr}</span>
-                `;
-                
-                if (answered) {
-                    btn.classList.add('locked');
-                    if (i === q.a) btn.classList.add('correct');
-                    if (userAns[idx] === i && i !== q.a) btn.classList.add('wrong');
-                } else {
-                    btn.onclick = () => select(i);
-                }
-                container.appendChild(btn);
-            });
-            
-            document.getElementById('progress-fill').style.width = `${((idx + 1) / quizData.length) * 100}%`;
-        }
-
-        function select(choice) {
-            if (userAns[idx] !== null) return;
-            userAns[idx] = choice;
-            const correct = (choice === quizData[idx].a);
-            if (correct) { score++; setBebo('success', 'correct'); }
-            else { setBebo('error', 'aggressive'); }
-            render();
-        }
-
-        function nextQuestion() { 
-            if (idx < quizData.length - 1) { idx++; render(); } 
-            else finish(); 
-        }
-        
-        function prevQuestion() { if (idx > 0) { idx--; render(); } }
-        
-        function finish() {
-            document.getElementById('quiz-container').classList.add('hidden');
-            document.querySelector('.bebo-wrapper').classList.add('hidden');
-            document.getElementById('result-view').classList.remove('hidden');
-            const pct = Math.round((score / quizData.length) * 100);
-            document.getElementById('final-score').innerText = pct + '%';
-            const category = pct >= 70 ? 'resultsSuccess' : 'resultsAdvice';
-            document.getElementById('result-message').innerText = beboMessages[category][Math.floor(Math.random()*beboMessages[category].length)];
-        }
-
-        function restartQuiz() {
-            idx = 0; score = 0;
-            userAns = new Array(quizData.length).fill(null);
-            document.querySelector('.bebo-wrapper').classList.remove('hidden');
-            document.getElementById('quiz-container').classList.remove('hidden');
-            document.getElementById('result-view').classList.add('hidden');
-            render();
-            setBebo('ready', 'intro');
-        }
-
-        window.onload = () => { render(); setBebo('ready', 'intro'); };
-    </script>
+    <script src="main.js"></script>
 </body>
 </html>
